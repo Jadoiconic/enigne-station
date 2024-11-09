@@ -64,8 +64,7 @@ const Settings = () => {
                           type="text"
                           name="fullName"
                           id="fullName"
-                          placeholder="Devid Jhon"
-                          defaultValue="Devid Jhon"
+                          placeholder="John Doe"
                         />
                       </div>
                     </div>
@@ -82,8 +81,7 @@ const Settings = () => {
                         type="text"
                         name="phoneNumber"
                         id="phoneNumber"
-                        placeholder="+990 3343 7865"
-                        defaultValue="+990 3343 7865"
+                        placeholder="+250 783 343 865"
                       />
                     </div>
                   </div>
@@ -126,8 +124,7 @@ const Settings = () => {
                         type="email"
                         name="emailAddress"
                         id="emailAddress"
-                        placeholder="devidjond45@gmail.com"
-                        defaultValue="devidjond45@gmail.com"
+                        placeholder="example@domain.com"
                       />
                     </div>
                   </div>
@@ -144,8 +141,7 @@ const Settings = () => {
                       type="text"
                       name="Username"
                       id="Username"
-                      placeholder="devidjhon24"
-                      defaultValue="devidjhon24"
+                      placeholder="Johndoe"
                     />
                   </div>
 
@@ -229,7 +225,7 @@ const Settings = () => {
                   <div className="mb-4 flex items-center gap-3">
                     <div className="h-14 w-14 rounded-full">
                       <Image
-                        src={"/images/user/user-03.png"}
+                        src={"/images/user/user-06.png"}
                         width={55}
                         height={55}
                         alt="User"

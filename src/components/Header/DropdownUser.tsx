@@ -3,7 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import ClickOutside from "@/components/ClickOutside";
 import { FaCog, FaRegUser } from "react-icons/fa";
-import { BiLogOut } from "react-icons/bi";
+import { BiLogOut, BiUserCircle } from "react-icons/bi";
 
 const DropdownUser = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -17,22 +17,24 @@ const DropdownUser = () => {
       >
         <span className="hidden text-right lg:block">
           <span className="block text-sm font-medium text-black dark:text-white">
-            Thomas Anree
+            Pupm User
           </span>
-          <span className="block text-xs">UX Designer</span>
+          <span className="block text-xs">Pumpist</span>
         </span>
 
         <span className="h-12 w-12 rounded-full">
           <Image
             width={112}
             height={112}
-            src={"/images/user/user-01.png"}
+            src={"/images/user/user-06.png"}
             style={{
               width: "auto",
               height: "auto",
             }}
             alt="User"
           />
+
+          {/* <BiUserCircle size={50} /> */}
         </span>
 
         <svg
