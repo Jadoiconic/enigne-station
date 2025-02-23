@@ -23,7 +23,7 @@ const DropdownUser = () => {
         </span>
 
         <span className="h-12 w-12 rounded-full">
-          <Image
+          {/* <Image
             width={112}
             height={112}
             src={"/images/user/user-06.png"}
@@ -32,9 +32,9 @@ const DropdownUser = () => {
               height: "auto",
             }}
             alt="User"
-          />
+          /> */}
 
-          {/* <BiUserCircle size={50} /> */}
+          <BiUserCircle size={50} />
         </span>
 
         <svg

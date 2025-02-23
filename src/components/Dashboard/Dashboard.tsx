@@ -1,8 +1,23 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from 'react';
 import CardDataStats from "../CardDataStats";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from 'recharts';
 
 
+
+interface BalanceData {
+  date: string;
+  income: number;
+  expenses: number;
+}
 
 const Dashboard: React.FC = () => {
   return (

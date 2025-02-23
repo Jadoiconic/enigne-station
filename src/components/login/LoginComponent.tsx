@@ -39,7 +39,7 @@ export const LoginComponent = () => {
     };
 
     return (
-        <section className="rounded-sm border border-stroke h-screen md:py-12 xl:py-12 lg:py-12 bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+        <section className="rounded-sm border w-full border-stroke h-screen md:py-12 xl:py-12 lg:py-12 bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
             <div className="flex flex-wrap items-center">
                 <div className="hidden w-full xl:block xl:w-1/2">
                     <div className="px-26 py-17.5 text-center">
@@ -54,7 +54,6 @@ export const LoginComponent = () => {
                         </Link>
 
                         <p className="2xl:px-20">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit suspendisse.
                         </p>
 
                         <span className="mt-15 inline-block">

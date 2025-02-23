@@ -1,35 +1,54 @@
 "use client"
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 
 interface IncomeData {
-    id: number;
     date: string;
     station: string;
-    liters: number;
-    income: number;
+    amount: number;
+    price: number;
 }
-interface ExpansesData {
-    id: number;
+interface ExpensesData {
     date: string;
     station: string;
-    liters: number;
-    income: number;
+    amount: number;
+    price: number;
 }
 
 
 const ReportTable = () => {
-    const [icome, setIcome] = useState<ExpansesData[] | IncomeData[]>([
-        { id: 1, date: '2024-08-20', station: 'Station 1', liters: 500, income: 1000 },
-        { id: 2, date: '2024-08-21', station: 'Station 2', liters: 600, income: 1200 },
-        { id: 3, date: '2024-08-22', station: 'Station 3', liters: 450, income: 900 },
-    ]);
-    const [expenses, setExpenses] = useState<ExpansesData[] | IncomeData[]>([
-        { id: 1, date: '2024-08-20', station: 'Station 1', liters: 500, income: 1000 },
-        { id: 2, date: '2024-08-21', station: 'Station 2', liters: 600, income: 1200 },
-        { id: 3, date: '2024-08-22', station: 'Station 3', liters: 450, income: 900 },
-    ]);
+    const [currentUser] = useState<string>('673b333412dcd82679bbe0ca');
+
+    const [data, setData] = useState<IncomeData[]>([]);
+    const [dataExpense, setDataExpense] = useState<ExpensesData[]>([]);
+
+    useEffect(() => {
+        const fetchIncomeData = async () => {
+            try {
+                const response = await fetch(`http://localhost:3000/api/incomes?id=${currentUser}`);
+                const res = await response.json();
+                setData(res.data);
+            } catch (error) {
+                console.error('There was a problem with the fetch request:', error);
+            }
+        };
+
+        const fetchExpensesData = async () => {
+            try {
+                const response = await fetch(`http://localhost:3000/api/expenses?id=${currentUser}`);
+                const res = await response.json();
+                setDataExpense(res.data);
+            } catch (error) {
+                console.error('There was a problem with the fetch request:', error);
+            }
+        };
+
+        fetchExpensesData();
+        fetchIncomeData();
+
+    }
+        , [currentUser]);
 
     return (
         <div className='space-y-4'>
@@ -39,7 +58,6 @@ const ReportTable = () => {
                 <table className="w-full table-auto border-collapse">
                     <thead>
                         <tr>
-                            <th className="border px-4 py-2">ID</th>
                             <th className="border px-4 py-2">Date</th>
                             <th className="border px-4 py-2">Station</th>
                             <th className="border px-4 py-2">Liters</th>
@@ -47,14 +65,13 @@ const ReportTable = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {icome.length > 0 ? (
-                            icome.map((item) => (
-                                <tr key={item.id}>
-                                    <td className="border px-4 py-2 text-center">{item.id}</td>
-                                    <td className="border px-4 py-2 text-center">{item.date}</td>
+                        {data.length > 0 ? (
+                            data.map((item) => (
+                                <tr key={item._id}>
+                                    <td className="border px-4 py-2 text-center">{new Date(item.createdAt).toISOString().split('T')[0]}</td>
                                     <td className="border px-4 py-2 text-center">{item.station}</td>
-                                    <td className="border px-4 py-2 text-center">{item.liters}</td>
-                                    <td className="border px-4 py-2 text-center">{item.income}</td>
+                                    <td className="border px-4 py-2 text-center">{item.amount}</td>
+                                    <td className="border px-4 py-2 text-center">{item.price}</td>
 
                                 </tr>
                             ))
@@ -75,7 +92,6 @@ const ReportTable = () => {
                 <table className="w-full table-auto border-collapse">
                     <thead>
                         <tr>
-                            <th className="border px-4 py-2">ID</th>
                             <th className="border px-4 py-2">Date</th>
                             <th className="border px-4 py-2">Station</th>
                             <th className="border px-4 py-2">Liters</th>
@@ -83,14 +99,13 @@ const ReportTable = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {expenses.length > 0 ? (
-                            expenses.map((item) => (
-                                <tr key={item.id}>
-                                    <td className="border px-4 py-2 text-center">{item.id}</td>
-                                    <td className="border px-4 py-2 text-center">{item.date}</td>
+                        {dataExpense.length > 0 ? (
+                            dataExpense.map((item) => (
+                                <tr key={item._id}>
+                                    <td className="border px-4 py-2 text-center">{new Date(item.createdAt).toISOString().split('T')[0]}</td>
                                     <td className="border px-4 py-2 text-center">{item.station}</td>
-                                    <td className="border px-4 py-2 text-center">{item.liters}</td>
-                                    <td className="border px-4 py-2 text-center">{item.income}</td>
+                                    <td className="border px-4 py-2 text-center">{item.amount}</td>
+                                    <td className="border px-4 py-2 text-center">{item.price}</td>
 
                                 </tr>
                             ))

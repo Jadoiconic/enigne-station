@@ -1,80 +1,193 @@
 "use client"
 
-import React, { useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 
 interface IncomeData {
-    id: number;
     date: string;
     station: string;
-    liters: number;
-    income: number;
+    amount: number;
+    price: number;
 }
 
 const IncomeTable: React.FC = () => {
-    const [data, setData] = useState<IncomeData[]>([
-        { id: 1, date: '2024-08-20', station: 'Station 1', liters: 500, income: 1000 },
-        { id: 2, date: '2024-08-21', station: 'Station 2', liters: 600, income: 1200 },
-        { id: 3, date: '2024-08-22', station: 'Station 3', liters: 450, income: 900 },
-    ]);
+    const [currentUser] = useState<string>('673b333412dcd82679bbe0ca');
+
+    const [data, setData] = useState<IncomeData[]>([]);
 
     const [searchTerm, setSearchTerm] = useState<string>('');
     const [filterStation, setFilterStation] = useState<string>('');
     const [filterStartDate, setFilterStartDate] = useState<string>('');
     const [filterEndDate, setFilterEndDate] = useState<string>('');
 
-    const handleDelete = (id: number) => {
-        setData(data.filter(item => item.id !== id));
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [newStation, setNewStation] = useState('');
+    const [newAmount, setNewAmount] = useState('');
+    const [newPrice, setNewPrice] = useState('');
+
+    const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+    const [selectedExpense, setSelectedExpense] = useState<IncomeData | null>(null);
+    const [updatedStation, setUpdatedStation] = useState('');
+    const [updatedAmount, setUpdatedAmount] = useState('');
+    const [updatedPrice, setUpdatedPrice] = useState('');
+
+    const openUpdateModal = (expense: IncomeData) => {
+        setSelectedExpense(expense);
+        setUpdatedStation(expense.station);
+        setUpdatedAmount(expense.amount.toString());
+        setUpdatedPrice(expense.price.toString());
+        setIsUpdateModalOpen(true);
     };
 
-    const handleModify = (id: number) => {
-        const date = prompt("Enter new date (YYYY-MM-DD):");
-        const station = prompt("Enter new station name:");
-        const liters = prompt("Enter new number of liters:");
-        const income = prompt("Enter new income:");
+    const closeUpdateModal = () => {
+        setIsUpdateModalOpen(false);
+        setSelectedExpense(null);
+        setUpdatedStation('');
+        setUpdatedAmount('');
+        setUpdatedPrice('');
+    };
 
-        if (date && station && liters && income) {
-            setData(data.map(item =>
-                item.id === id
-                    ? { ...item, date, station, liters: Number(liters), income: Number(income) }
-                    : item
-            ));
+
+    const handleUpdateRecord = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        if (!selectedExpense) return;
+
+        try {
+            const response = await fetch(`/api/incomes?id=${selectedExpense._id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    station: updatedStation,
+                    amount: updatedAmount,
+                    price: updatedPrice,
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to update the record.');
+            }
+
+            const result = await response.json();
+            console.log('Update Success:', result);
+
+            // Update state with the updated record
+            setData(prevData =>
+                prevData.map(item =>
+                    item._id === selectedExpense._id ? { ...item, station: updatedStation, amount: parseInt(updatedAmount), price: parseInt(updatedPrice) } : item
+                )
+            );
+
+            // Close modal and reset form fields
+            closeUpdateModal();
+        } catch (error) {
+            console.error('Error updating record:', error);
         }
     };
 
-    const handleAddNewRecord = () => {
-        const date = prompt("Enter date (YYYY-MM-DD):");
-        const station = prompt("Enter station name:");
-        const liters = prompt("Enter number of liters:");
-        const income = prompt("Enter income:");
 
-        if (date && station && liters && income) {
-            const newRecord = {
-                id: data.length + 1,
-                date,
-                station,
-                liters: Number(liters),
-                income: Number(income)
-            };
-            setData([...data, newRecord]);
+
+
+    const openModal = () => setIsModalOpen(true);
+    const closeModal = () => {
+        setIsModalOpen(false);
+        setNewStation('');
+        setNewAmount('');
+        setNewPrice('');
+    };
+
+    const handleCreateRecord = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        try {
+            const response = await fetch('/api/incomes', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    station: newStation,
+                    amount: newAmount,
+                    price: newPrice,
+                    userId: currentUser,
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to create the record.');
+            }
+
+            const result = await response.json();
+            console.log('Create Success:', result);
+
+            // Update state with the newly created record
+            setData(prevData => [...prevData, result.data]);
+
+            // Close modal and reset form fields
+            closeModal();
+        } catch (error) {
+            console.error('Error creating record:', error);
         }
     };
+
+
+    useEffect(() => {
+        const fetchIncomeData = async () => {
+            try {
+                const response = await fetch(`http://localhost:3000/api/incomes?id=${currentUser}`);
+                const res = await response.json();
+                setData(res.data);
+            } catch (error) {
+                console.error('There was a problem with the fetch request:', error);
+            }
+        };
+
+        fetchIncomeData();
+    }
+        , [currentUser]);
+
+    const handleDelete = async (id: string) => {
+        try {
+            const response = await fetch(`/api/incomes?id=${id}`, {
+                method: 'DELETE',
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to delete the record.');
+            }
+
+            const result = await response.json();
+
+            console.log('Delete Success:', result);
+            setData(prevData => prevData.filter(item => item._id !== id));
+
+            // Optionally, refresh data or update state here
+        } catch (error) {
+            console.error('Error deleting record:', error);
+        }
+    };
+
+
+
+
 
     const filteredData = data
         .filter(item =>
             (!filterStation || item.station.toLowerCase().includes(filterStation.toLowerCase())) &&
-            (!filterStartDate || item.date >= filterStartDate) &&
-            (!filterEndDate || item.date <= filterEndDate)
+            (!filterStartDate || item.createdAt >= filterStartDate) &&
+            (!filterEndDate || item.createdAt <= filterEndDate)
         )
         .filter(item =>
             item.station.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            item.date.includes(searchTerm) ||
-            item.liters.toString().includes(searchTerm) ||
-            item.income.toString().includes(searchTerm)
+            item.createdAt.includes(searchTerm) ||
+            item.amount.toString().includes(searchTerm) ||
+            item.price.toString().includes(searchTerm)
         );
 
     return (
         <div className="py-4">
-            <h1 className="text-2xl font-bold mb-4">Income Table</h1>
+            <h1 className="text-2xl font-bold mb-4">Icome Table</h1>
 
             <div className='md:flex justify-between items-center'>
                 <div className="mb-4">
@@ -109,7 +222,7 @@ const IncomeTable: React.FC = () => {
                 </div>
 
                 <button
-                    onClick={handleAddNewRecord}
+                    onClick={openModal}
                     className="px-4 py-2 mb-4 text-white bg-blue-600 rounded"
                 >
                     Add New Record
@@ -119,7 +232,6 @@ const IncomeTable: React.FC = () => {
             <table className="w-full table-auto border-collapse">
                 <thead>
                     <tr>
-                        <th className="border px-4 py-2">ID</th>
                         <th className="border px-4 py-2">Date</th>
                         <th className="border px-4 py-2">Station</th>
                         <th className="border px-4 py-2">Liters</th>
@@ -131,20 +243,19 @@ const IncomeTable: React.FC = () => {
                     {filteredData.length > 0 ? (
                         filteredData.map((item) => (
                             <tr key={item.id}>
-                                <td className="border px-4 py-2 text-center">{item.id}</td>
-                                <td className="border px-4 py-2 text-center">{item.date}</td>
+                                <td className="border px-4 py-2 text-center">{new Date(item.createdAt).toISOString().split('T')[0]}</td>
                                 <td className="border px-4 py-2 text-center">{item.station}</td>
-                                <td className="border px-4 py-2 text-center">{item.liters}</td>
-                                <td className="border px-4 py-2 text-center">{item.income}</td>
+                                <td className="border px-4 py-2 text-center">{item.amount}</td>
+                                <td className="border px-4 py-2 text-center">{item.price}</td>
                                 <td className="border px-4 py-2 text-center">
                                     <button
-                                        onClick={() => handleModify(item.id)}
+                                        onClick={() => openUpdateModal(item)}
                                         className="px-4 py-1 mx-1 text-white bg-blue-500 rounded"
                                     >
                                         Modify
                                     </button>
                                     <button
-                                        onClick={() => handleDelete(item.id)}
+                                        onClick={() => handleDelete(item._id)}
                                         className="px-4 py-1 mx-1 text-white bg-red rounded"
                                     >
                                         Delete
@@ -161,8 +272,121 @@ const IncomeTable: React.FC = () => {
                     )}
                 </tbody>
             </table>
+            {isModalOpen && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                    <div className="bg-white p-6 rounded-lg w-1/3">
+                        <h2 className="text-xl font-bold mb-4">Add New Record</h2>
+                        <form onSubmit={handleCreateRecord}>
+                            <div className="mb-4">
+                                <input
+                                    type="text"
+                                    placeholder="Station"
+                                    value={newStation}
+                                    onChange={(e) => setNewStation(e.target.value)}
+                                    className="w-full px-4 py-2 border rounded"
+                                    required
+                                />
+                            </div>
+                            <div className="mb-4">
+                                <input
+                                    type="number"
+                                    placeholder="Amount"
+                                    value={newAmount}
+                                    onChange={(e) => setNewAmount(e.target.value)}
+                                    className="w-full px-4 py-2 border rounded"
+                                    required
+                                />
+                            </div>
+                            <div className="mb-4">
+                                <input
+                                    type="number"
+                                    placeholder="Price"
+                                    value={newPrice}
+                                    onChange={(e) => setNewPrice(e.target.value)}
+                                    className="w-full px-4 py-2 border rounded"
+                                    required
+                                />
+                            </div>
+                            <div className="flex justify-end">
+                                <button
+                                    type="button"
+                                    onClick={closeModal}
+                                    className="px-4 py-2 mr-2 text-gray-700 border rounded"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    className="px-4 py-2 text-white bg-blue-600 rounded"
+                                >
+                                    Save
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+
+                </div>
+            )}
+            {isUpdateModalOpen && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                    <div className="bg-white p-6 rounded-lg w-1/3">
+                        <h2 className="text-xl font-bold mb-4">Update Record</h2>
+                        <form onSubmit={handleUpdateRecord}>
+                            <div className="mb-4">
+                                <input
+                                    type="text"
+                                    placeholder="Station"
+                                    value={updatedStation}
+                                    onChange={(e) => setUpdatedStation(e.target.value)}
+                                    className="w-full px-4 py-2 border rounded"
+                                    required
+                                />
+                            </div>
+                            <div className="mb-4">
+                                <input
+                                    type="number"
+                                    placeholder="Amount"
+                                    value={updatedAmount}
+                                    onChange={(e) => setUpdatedAmount(e.target.value)}
+                                    className="w-full px-4 py-2 border rounded"
+                                    required
+                                />
+                            </div>
+                            <div className="mb-4">
+                                <input
+                                    type="number"
+                                    placeholder="Price"
+                                    value={updatedPrice}
+                                    onChange={(e) => setUpdatedPrice(e.target.value)}
+                                    className="w-full px-4 py-2 border rounded"
+                                    required
+                                />
+                            </div>
+                            <div className="flex justify-end">
+                                <button
+                                    type="button"
+                                    onClick={closeUpdateModal}
+                                    className="px-4 py-2 mr-2 text-gray-700 border rounded"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    className="px-4 py-2 text-white bg-blue-600 rounded"
+                                >
+                                    Update
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
         </div>
     );
 };
+
+
 
 export default IncomeTable;

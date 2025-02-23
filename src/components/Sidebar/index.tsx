@@ -40,11 +40,7 @@ const menuGroups = [
         label: "Reports",
         route: "/reports",
       },
-      {
-        icon: <RiSettings3Fill size={18} />,
-        label: "Settings",
-        route: "/settings",
-      },
+
       // {
       //   icon: <RiSettings3Fill size={18} />,
       //   label: "Sign Up",
