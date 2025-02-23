@@ -6,7 +6,7 @@ import Link from "next/link";
 import { BiUserCircle } from "react-icons/bi";
 
 export const metadata: Metadata = {
-  title: "Profile",
+  title: "Profile | Engine Station",
   description:
     "This is Engine Station Profile page",
 };

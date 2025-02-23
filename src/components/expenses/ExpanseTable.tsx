@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 
 interface ExpensesData {
     id: number;
@@ -11,34 +11,37 @@ interface ExpensesData {
 }
 
 const ExpensesTable: React.FC = () => {
-    const [data, setData] = useState<ExpensesData[]>([
-        { id: 1, date: '2024-08-20', station: 'Station 1', liters: 500, income: 1000 },
-        { id: 2, date: '2024-08-21', station: 'Station 2', liters: 600, income: 1200 },
-        { id: 3, date: '2024-08-22', station: 'Station 3', liters: 450, income: 900 },
-    ]);
+    const [currentUser, setCurrentUser] = useState<string>('673b333412dcd82679bbe0ca');
+
+    const [data, setData] = useState<ExpensesData[]>([]);
 
     const [searchTerm, setSearchTerm] = useState<string>('');
     const [filterStation, setFilterStation] = useState<string>('');
     const [filterStartDate, setFilterStartDate] = useState<string>('');
     const [filterEndDate, setFilterEndDate] = useState<string>('');
 
+    useEffect(() => {
+        const fetchExpensesData = async () => {
+            try {
+                const response = await fetch(`http://localhost:3000/api/expenses?id=${currentUser}`);
+                const res = await response.json();
+                console.log('Expenses data:', res.data);
+                setData(res.data);
+            } catch (error) {
+                console.error('There was a problem with the fetch request:', error);
+            }
+        };
+
+        fetchExpensesData();
+    }
+    , [currentUser]);
+
     const handleDelete = (id: number) => {
         setData(data.filter(item => item.id !== id));
     };
 
-    const handleModify = (id: number) => {
-        const date = prompt("Enter new date (YYYY-MM-DD):");
-        const station = prompt("Enter new station name:");
-        const liters = prompt("Enter new number of liters:");
-        const income = prompt("Enter new income:");
-
-        if (date && station && liters && income) {
-            setData(data.map(item =>
-                item.id === id
-                    ? { ...item, date, station, liters: Number(liters), income: Number(income) }
-                    : item
-            ));
-        }
+    const handleModify = (id: string) => {
+       
     };
 
     const handleAddNewRecord = () => {
@@ -62,14 +65,14 @@ const ExpensesTable: React.FC = () => {
     const filteredData = data
         .filter(item =>
             (!filterStation || item.station.toLowerCase().includes(filterStation.toLowerCase())) &&
-            (!filterStartDate || item.date >= filterStartDate) &&
-            (!filterEndDate || item.date <= filterEndDate)
+            (!filterStartDate || item.createdAt >= filterStartDate) &&
+            (!filterEndDate || item.createdAt <= filterEndDate)
         )
         .filter(item =>
             item.station.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            item.date.includes(searchTerm) ||
-            item.liters.toString().includes(searchTerm) ||
-            item.income.toString().includes(searchTerm)
+            item.createdAt.includes(searchTerm) ||
+            item.amount.toString().includes(searchTerm) ||
+            item.price.toString().includes(searchTerm)
         );
 
     return (
@@ -119,7 +122,6 @@ const ExpensesTable: React.FC = () => {
             <table className="w-full table-auto border-collapse">
                 <thead>
                     <tr>
-                        <th className="border px-4 py-2">ID</th>
                         <th className="border px-4 py-2">Date</th>
                         <th className="border px-4 py-2">Station</th>
                         <th className="border px-4 py-2">Liters</th>
@@ -131,11 +133,10 @@ const ExpensesTable: React.FC = () => {
                     {filteredData.length > 0 ? (
                         filteredData.map((item) => (
                             <tr key={item.id}>
-                                <td className="border px-4 py-2 text-center">{item.id}</td>
-                                <td className="border px-4 py-2 text-center">{item.date}</td>
+                                <td className="border px-4 py-2 text-center">{new Date(item.createdAt).toISOString().split('T')[0]}</td>
                                 <td className="border px-4 py-2 text-center">{item.station}</td>
-                                <td className="border px-4 py-2 text-center">{item.liters}</td>
-                                <td className="border px-4 py-2 text-center">{item.income}</td>
+                                <td className="border px-4 py-2 text-center">{item.amount}</td>
+                                <td className="border px-4 py-2 text-center">{item.price}</td>
                                 <td className="border px-4 py-2 text-center">
                                     <button
                                         onClick={() => handleModify(item.id)}

@@ -4,7 +4,7 @@ import { Metadata } from "next";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 
 export const metadata: Metadata = {
-  title: "Settings",
+  title: "Settings | Engine Station",
   description:
     "This is Engine Station Settings page",
 };
