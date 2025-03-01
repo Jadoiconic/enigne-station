@@ -13,6 +13,7 @@ const ExpensesTable: React.FC = () => {
     const [currentUser] = useState<string>('673b333412dcd82679bbe0ca');
 
     const [data, setData] = useState<ExpensesData[]>([]);
+    const [stations, setStations] = useState<string[]>([]);
 
     const [searchTerm, setSearchTerm] = useState<string>('');
     const [filterStation, setFilterStation] = useState<string>('');
@@ -30,6 +31,27 @@ const ExpensesTable: React.FC = () => {
     const [updatedAmount, setUpdatedAmount] = useState('');
     const [updatedPrice, setUpdatedPrice] = useState('');
 
+
+    useEffect(() => {
+        const fetchExpensesData = async () => {
+            try {
+                const response = await fetch(`http://localhost:3000/api/incomes?id=${currentUser}`);
+                const resExpeses = await fetch(`http://localhost:3000/api/expenses?id=${currentUser}`);
+                const res = await response.json();
+                const resEx = await resExpeses.json();
+                setData(resEx.data);
+
+                // Extract unique stations
+                const uniqueStations = [...new Set(res.data.map((item: ExpensesData) => item.station))];
+                setStations(uniqueStations);
+            } catch (error) {
+                console.error('There was a problem with the fetch request:', error);
+            }
+        };
+
+        fetchExpensesData();
+    }, [currentUser]);
+    
     const openUpdateModal = (expense: ExpensesData) => {
         setSelectedExpense(expense);
         setUpdatedStation(expense.station);
@@ -278,14 +300,17 @@ const ExpensesTable: React.FC = () => {
                         <h2 className="text-xl font-bold mb-4">Add New Record</h2>
                         <form onSubmit={handleCreateRecord}>
                             <div className="mb-4">
-                                <input
-                                    type="text"
-                                    placeholder="Station"
+                                <select
                                     value={newStation}
                                     onChange={(e) => setNewStation(e.target.value)}
                                     className="w-full px-4 py-2 border rounded"
                                     required
-                                />
+                                >
+                                    <option value="">Select Station</option>
+                                    {stations.map((station) => (
+                                        <option key={station} value={station}>{station}</option>
+                                    ))}
+                                </select>
                             </div>
                             <div className="mb-4">
                                 <input
@@ -342,6 +367,7 @@ const ExpensesTable: React.FC = () => {
                                     className="w-full px-4 py-2 border rounded"
                                     required
                                 />
+                               
                             </div>
                             <div className="mb-4">
                                 <input
