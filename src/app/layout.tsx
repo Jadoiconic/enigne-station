@@ -5,22 +5,23 @@ import "@/css/satoshi.css";
 import "@/css/style.css";
 import React, { useEffect, useState } from "react";
 import Loader from "@/components/common/Loader";
+import store from "./store";
+import { Provider } from "react-redux";
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [loading, setLoading] = useState<boolean>(true);
+  // const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
-  // const pathname = usePathname();
-
-  useEffect(() => {
-    setTimeout(() => setLoading(false), 1000);
-  }, []);
+ 
 
   return (
+    <Provider store={store}>
+
+    
     <html lang="en">
       <body suppressHydrationWarning={true}>
         <div className="dark:bg-boxdark-2 dark:text-bodydark">
@@ -28,5 +29,6 @@ export default function RootLayout({
         </div>
       </body>
     </html>
+    </Provider>
   );
 }

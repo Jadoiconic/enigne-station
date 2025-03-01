@@ -3,27 +3,27 @@
 import Link from "next/link";
 import React from "react";
 import Image from "next/image";
-// import { useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import PhoneIcon from "@/constants/PhoneIcon";
 import EmailIcon from "@/constants/EmailIcon";
 import PasswordIcon from "@/constants/PasswordIcon";
 import { login } from "@/features/auth/authSlice";
-const BASE_URL = "http://localhost/api/users";
 
 export const LoginComponent = () => {
     const [email, setEmail] = React.useState<string>("");
     const [password, setPassword] = React.useState<string>("");
-    // const dispatch = useDispatch();
+    const dispatch = useDispatch();
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const response = await fetch(`${BASE_URL}/login`, {
+
+            const response = await fetch('/api/users', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ email, password }),
+                body: JSON.stringify({ email, password, type: 'login' }),
             });
 
             if (!response.ok) {
@@ -31,8 +31,9 @@ export const LoginComponent = () => {
             }
 
             const data = await response.json();
-            // dispatch(login({ user: data.user, token: data.token }));
-            console.log('Login successful:', data);
+            dispatch(login({ user: data.user, token: '' }));
+            // window.location.href = '/';
+            console.log( data);
         } catch (error) {
             console.error('There was a problem with the login request:', error);
         }
