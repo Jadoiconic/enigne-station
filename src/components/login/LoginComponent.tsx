@@ -8,11 +8,13 @@ import PhoneIcon from "@/constants/PhoneIcon";
 import EmailIcon from "@/constants/EmailIcon";
 import PasswordIcon from "@/constants/PasswordIcon";
 import { login } from "@/features/auth/authSlice";
+import { useRouter } from "next/navigation";
 
 export const LoginComponent = () => {
     const [email, setEmail] = React.useState<string>("");
     const [password, setPassword] = React.useState<string>("");
     const dispatch = useDispatch();
+    const router = useRouter();
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -32,8 +34,9 @@ export const LoginComponent = () => {
 
             const data = await response.json();
             dispatch(login({ user: data.user, token: '' }));
-            // window.location.href = '/';
-            console.log( data);
+            localStorage.setItem('userId', data.user._id);
+            router.push('/');
+            console.log(data);
         } catch (error) {
             console.error('There was a problem with the login request:', error);
         }

@@ -4,9 +4,11 @@ import Image from "next/image";
 import ClickOutside from "@/components/ClickOutside";
 import { FaCog, FaRegUser } from "react-icons/fa";
 import { BiLogOut, BiUserCircle } from "react-icons/bi";
+import { useSelector } from "react-redux";
 
 const DropdownUser = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const currentUser = useSelector((state: any) => state.auth.user);
 
   return (
     <ClickOutside onClick={() => setDropdownOpen(false)} className="relative">
@@ -17,9 +19,9 @@ const DropdownUser = () => {
       >
         <span className="hidden text-right lg:block">
           <span className="block text-sm font-medium text-black dark:text-white">
-            Pupm User
+           {currentUser?.name}
           </span>
-          <span className="block text-xs">Pumpist</span>
+          <span className="block text-xs">{currentUser?.role}</span>
         </span>
 
         <span className="h-12 w-12 rounded-full">

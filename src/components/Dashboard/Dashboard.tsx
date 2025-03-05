@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import CardDataStats from "../CardDataStats";
+import { useSelector } from "react-redux";
 
 interface BalanceData {
   income: number;
@@ -11,10 +12,12 @@ interface BalanceData {
 const Dashboard: React.FC = () => {
   const [balance, setBalance] = useState<BalanceData>({ income: 0, expenses: 0 });
   const [chartData, setChartData] = useState<{ name: string; value: number }[]>([]);
+  const currentUser = useSelector((state: any) => state.auth.user);
 
   useEffect(() => {
     const fetchBalanceData = async () => {
       try {
+        console.log(currentUser)
         const response = await fetch("http://localhost:3000/api/income"); // Replace with your API
         if (!response.ok) throw new Error("Failed to fetch balance data");
 
