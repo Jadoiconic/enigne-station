@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import CardDataStats from "../CardDataStats";
 import { useSelector } from "react-redux";
+import { useRouter } from "next/navigation";
 
 interface BalanceData {
   income: number;
@@ -13,6 +14,11 @@ const Dashboard: React.FC = () => {
   const [balance, setBalance] = useState<BalanceData>({ income: 0, expenses: 0 });
   const [chartData, setChartData] = useState<{ name: string; value: number }[]>([]);
   const currentUser = useSelector((state: any) => state.auth.user);
+  const router = useRouter();
+  if (!currentUser) {
+    router.push("/auth/signin");
+    return null;
+  }
 
   useEffect(() => {
     const fetchBalanceData = async () => {

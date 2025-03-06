@@ -2,6 +2,7 @@
 import { Metadata } from "next";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import Dashboard from "@/components/Dashboard/Dashboard";
+import useCheckAuth from "../../utils/checkAuth";
 
 export const metadata: Metadata = {
   title:

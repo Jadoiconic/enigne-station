@@ -34,7 +34,7 @@ export const LoginComponent = () => {
 
             const data = await response.json();
             dispatch(login({ user: data.user, token: '' }));
-            localStorage.setItem('userId', data.user._id);
+            // localStorage.setItem('user', data.user);
             router.push('/');
             console.log(data);
         } catch (error) {

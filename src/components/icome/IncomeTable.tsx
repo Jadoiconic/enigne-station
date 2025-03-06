@@ -1,6 +1,6 @@
 "use client"
 
-import React, { use, useEffect, useState } from 'react';
+import React, {  useEffect, useState } from 'react';
 
 interface IncomeData {
     date: string;
@@ -10,6 +10,7 @@ interface IncomeData {
 }
 
 const IncomeTable: React.FC = () => {
+
     const [currentUser] = useState<string>('673b333412dcd82679bbe0ca');
 
     const [data, setData] = useState<IncomeData[]>([]);
