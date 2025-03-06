@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
@@ -85,7 +87,7 @@ const DropdownUser = () => {
               </Link>
             </li>
           </ul>
-          <button onClick={()=>dispatch(logout)} className="flex items-center gap-3.5 px-6 py-4 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base">
+          <button onClick={()=>dispatch(logout())} className="flex items-center gap-3.5 px-6 py-4 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base">
             <Link href="/auth/signin" className="flex items-center gap-3.5">
             <BiLogOut size={25} />
             Log Out
