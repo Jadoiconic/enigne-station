@@ -4,7 +4,7 @@ import { LoginComponent } from "@/components/login/LoginComponent";
 
 export const metadata: Metadata = {
   title: "Engine Station SignIn Page ",
-  description: "This is Egine Station Signin Page",
+  description: "This is Engine Station Signin Page",
 };
 
 const SignIn: React.FC = () => {
