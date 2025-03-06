@@ -11,9 +11,7 @@ const DropdownUser = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const currentUser = useSelector((state: any) => state.auth.user);
   const dispatch = useDispatch();
-  const handleLogout = () => {
-    dispatch(logout());
-  };
+ 
 
 
   return (
@@ -87,8 +85,8 @@ const DropdownUser = () => {
               </Link>
             </li>
           </ul>
-          <button onClick={handleLogout} className="flex items-center gap-3.5 px-6 py-4 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base">
-            <Link href="/auth/signin">
+          <button onClick={()=>dispatch(logout)} className="flex items-center gap-3.5 px-6 py-4 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base">
+            <Link href="/auth/signin" className="flex items-center gap-3.5">
             <BiLogOut size={25} />
             Log Out
             </Link>

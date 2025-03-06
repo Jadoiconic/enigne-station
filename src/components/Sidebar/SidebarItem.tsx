@@ -1,7 +1,8 @@
 import React from "react";
 import Link from "next/link";
 import SidebarDropdown from "@/components/Sidebar/SidebarDropdown";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useSelector } from "react-redux";
 
 const SidebarItem = ({ item, pageName, setPageName }: any) => {
   const handleClick = () => {
@@ -9,7 +10,9 @@ const SidebarItem = ({ item, pageName, setPageName }: any) => {
       pageName !== item.label.toLowerCase() ? item.label.toLowerCase() : "";
     return setPageName(updatedPageName);
   };
-
+  const currentUser = useSelector((state: any) => state.auth.user);
+  console.log("navigation currecnt user",currentUser);
+  
   const pathname = usePathname();
 
   const isActive = (item: any) => {
@@ -55,14 +58,15 @@ const SidebarItem = ({ item, pageName, setPageName }: any) => {
 
         {item.children && (
           <div
-            className={`translate transform overflow-hidden ${
-              pageName !== item.label.toLowerCase() && "hidden"
+          className={`translate transform overflow-hidden ${
+            pageName !== item.label.toLowerCase() && "hidden"
             }`}
-          >
+            >
             <SidebarDropdown item={item.children} />
           </div>
         )}
       </li>
+      
     </>
   );
 };
